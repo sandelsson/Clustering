@@ -17,6 +17,9 @@ MIN_CLUSTERS = 2
 SHEETUNUMBER = 10
 DISTANCE = "euclidean"
 #DISTANCE = "rogerstanimoto"
+#LINKAGE = "ward"
+LINKAGE = "average"
+#LINKAGE = "complete"
 
 OPTIMAL_K = 6
 
@@ -52,7 +55,7 @@ def dice_distance(data):
     condensed_distance = pdist(data.values, metric=DISTANCE)
 
     # Perform hierarchical clustering
-    linkage_matrix = linkage(condensed_distance, method='ward')
+    linkage_matrix = linkage(condensed_distance, method=LINKAGE)
 
     # Plot the dendrogram
     plt.figure(figsize=(12, 8))
@@ -99,7 +102,7 @@ def silhouette(condensed_distance):
     distance_matrix = squareform(condensed_distance)
 
     # Perform hierarchical clustering using the linkage function
-    linkage_matrix = linkage(condensed_distance, method='average')
+    linkage_matrix = linkage(condensed_distance, method=LINKAGE)
 
     # Define the range of clusters to evaluate
     range_n_clusters = list(range(MIN_CLUSTERS, MAX_CLUSTERS))
@@ -181,7 +184,7 @@ def gap(data, linkage_matrix):
             raise ValueError(f"Random distance matrix contains non-finite values in iteration {b}.")
 
         # Perform hierarchical clustering on reference data
-        random_linkage_matrix = linkage(random_distance_matrix, method='ward')
+        random_linkage_matrix = linkage(random_distance_matrix, method=LINKAGE)
 
         for idx, k in enumerate(k_range):
             random_labels = fcluster(random_linkage_matrix, k, criterion='maxclust')
@@ -333,8 +336,7 @@ def main():
     #cluster seeds based on hierarchical clustering to be used in k-medoids clustering
     initial_medoids = cluster_seeds(data, linkage_matrix, condensed_distance)
 
-    print(initial_medoids)
-    #initial_medoids = [21,31,29,1,5,26] 
+    #initial_medoids = [33,13,18,4,27,1] 
 
 
 
