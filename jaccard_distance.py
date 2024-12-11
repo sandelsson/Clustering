@@ -34,7 +34,7 @@ def data_preprocess():
     data = data.apply(pd.to_numeric, errors='coerce')
 
     # Fill any NaN values with 0 (assuming missing values indicate absence)
-    data = data.fillna(0)
+    #data = data.fillna(0)
 
     # Convert all non-zero values to 1 (binary conversion)
     #data = data.astype(bool).astype(int)
@@ -291,9 +291,9 @@ def cluster_seeds(data, linkage_matrix, condensed_distance):
         initial_medoids.append(medoid_index)
 
     # Print the initial medoids
-    print("Initial medoids based on hierarchical clustering:")
-    for i, medoid_index in enumerate(initial_medoids):
-        print(f"Cluster {i + 1}: Medoid at index {medoid_index} ({data.index[medoid_index]})")
+    converted_medoids = [int(medoid) for medoid in initial_medoids]
+    print("Initial medoids based on hierarchical clustering:", converted_medoids)
+       
 
     return initial_medoids
 
