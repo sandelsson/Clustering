@@ -171,10 +171,47 @@ def list_cluster_members(data):
             print(f"- {member}")
     return cluster_members
 
+def visualize_clusters_separately(summary_df):
+    """
+    Visualize attribute values for each cluster in separate figures.
+    The summary_df should include the following columns:
+      - 'Cluster': Cluster identifier.
+      - 'n_companies': Number of companies in the cluster.
+      - Additional columns for each attribute (with value percentages).
+    """
+    # Determine the columns that represent attribute values (exclude 'Cluster' and 'n_companies')
+    attribute_columns = [col for col in summary_df.columns if col not in ['Cluster', 'n_companies']]
+    
+    # Iterate over each cluster (each row in the summary DataFrame)
+    for idx, row in summary_df.iterrows():
+        cluster_id = row['Cluster']
+        # Create a new figure for the current cluster
+        plt.figure(figsize=(6, 4))
+        # Extract attribute values for this cluster
+        feature_data = row[attribute_columns]
+        ax = feature_data.plot(kind='bar', color='skyblue')
+        ax.set_ylim(0, 100)
+        
+        # Format the y-axis tick labels to append a '%' symbol
+        ticks = ax.get_yticks()
+        ax.set_yticklabels([f'{int(t)}%' for t in ticks])
+        
+        # Set x-axis tick labels with a slight rotation for clarity
+        ax.set_xticklabels(feature_data.index, rotation=45, ha='right')
+        
+        # Optional: you can add a title if you want, e.g., "Cluster {cluster_id}" or leave it blank
+        # plt.title(f"Cluster {cluster_id}")
+        
+        plt.tight_layout()
+        plt.show()
+
+    
+
+
 # Example Usage
 def main():
     # Load the Excel file
-    data = pd.read_excel('Freemium list.xlsx', sheet_name='Sheet10')
+    data = pd.read_excel('Freemium list.xlsx', sheet_name='Sheet13')
 
     # Set 'Service Name' as the index
     data.set_index("Service Name", inplace=True)
@@ -186,10 +223,19 @@ def main():
     data = data.fillna(0)
 
     # Convert all non-zero values to 1 (binary conversion)
-    data = data.astype(bool).astype(int)
+    #data = data.astype(bool).astype(int)
 
     # Use the medoids identified from hierarchical clustering
-    initial_medoids = [21,31,29,1,5,26]   # Example indices
+
+    #initial_medoids = [40, 14, 39, 5, 2, 1] ##alkuperäinen
+
+    #initial_medoids = [14, 21, 27, 3, 4]
+    initial_medoids = [33, 27, 21, 4, 3]
+
+    #initial_medoids = [2, 3, 40, 14, 39, 5]
+    # Convert medoids to standard Python integers for better readability
+    converted_medoids = [int(medoid) for medoid in initial_medoids]
+    print("Initial medoids based on hierarchical clustering:", converted_medoids)
 
     # Perform K-Medoids clustering using initial medoid seeds and calculate validation metrics
     clustered_data, medoids, labels = k_medoids_clustering(data, initial_medoids)
@@ -207,5 +253,13 @@ def main():
     # List members of each cluster
     list_cluster_members(clustered_data)
 
+    # Generate and display the cluster summary table
+    summary_df = generate_cluster_summary(clustered_data)
+    print("\nCluster Summary Table:")
+    print(summary_df)
+
+    # Visualize the attribute distribution for each cluster in separate figures
+    visualize_clusters_separately(summary_df)
+
 if __name__ == "__main__":
-    main()
+    main()  
