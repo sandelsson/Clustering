@@ -14,14 +14,14 @@ from scipy.cluster.hierarchy import cophenet
 
 MAX_CLUSTERS = 10
 MIN_CLUSTERS = 2
-SHEETUNUMBER = 10
+SHEETUNUMBER = 13
 DISTANCE = "euclidean"
 #DISTANCE = "rogerstanimoto"
 #LINKAGE = "ward"
 LINKAGE = "average"
 #LINKAGE = "complete"
 
-OPTIMAL_K = 6
+OPTIMAL_K = 5
 
 def data_preprocess():
     # Load the Excel file
@@ -40,14 +40,16 @@ def data_preprocess():
     #data = data.astype(bool).astype(int)
     
     # Step 5: Duplicate rows
+    '''
     duplicate_rows = data[data.duplicated()]
     print(f"Number of duplicate rows: {len(duplicate_rows)}")
     
+     
     if len(duplicate_rows) > 0:
         print("Duplicate rows:")
         print(duplicate_rows)
         data = data.drop_duplicates()
-    
+        '''
     
     return data
 def dice_distance(data):
@@ -62,13 +64,13 @@ def dice_distance(data):
     dendrogram(
         linkage_matrix,
         labels=data.index,
-        orientation='top',
+        orientation='top', #or left
         distance_sort='descending',
         show_leaf_counts=True
     )
-    plt.title('Hierarchical Clustering Dendrogram')
-    plt.xlabel('Service Name')
-    plt.ylabel('Distance')
+    #plt.title('Hierarchical Clustering Dendrogram')
+    #plt.xlabel('Product Name')
+    #plt.ylabel('Distance')
     plt.xticks(rotation=90)
     plt.tight_layout()
     plt.show()
@@ -89,7 +91,7 @@ def elbow_chart(linkage_matrix):
     # Plot the elbow curve
     plt.figure(figsize=(8, 6))
     plt.plot(num_clusters, distances_reversed, marker='o')
-    plt.title('Elbow Method for Determining Optimal Number of Clusters')
+    #plt.title('Elbow Method for Determining Optimal Number of Clusters')
     plt.xlabel('Number of Clusters')
     plt.ylabel('Linkage Distance')
     plt.xticks(num_clusters)
@@ -122,7 +124,7 @@ def silhouette(condensed_distance):
     # Plot the silhouette scores
     plt.figure(figsize=(8, 6))
     plt.plot(range_n_clusters, silhouette_avg_scores, marker='o')
-    plt.title('Silhouette Scores for Different Numbers of Clusters (Dice Distance)')
+    #plt.title('Silhouette Scores for Different Numbers of Clusters')
     plt.xlabel('Number of Clusters')
     plt.ylabel('Average Silhouette Score')
     plt.xticks(range_n_clusters)
@@ -147,7 +149,7 @@ def ch_index(data, linkage_matrix):
     # Plot the Calinski-Harabasz Index
     plt.figure(figsize=(8, 6))
     plt.plot(range_n_clusters, calinski_harabasz_scores, marker='o', color='orange')
-    plt.title('Calinski-Harabasz Index for Different Numbers of Clusters (Dice Distance)')
+    #plt.title('Calinski-Harabasz Index for Different Numbers of Clusters')
     plt.xlabel('Number of Clusters')
     plt.ylabel('Calinski-Harabasz Index')
     plt.xticks(range_n_clusters)
@@ -199,7 +201,7 @@ def gap(data, linkage_matrix):
     plt.plot(k_range, gap_values, marker='o')
     plt.xlabel('Number of Clusters (k)')
     plt.ylabel('Gap Statistic')
-    plt.title('Gap Statistic for Determining Optimal Number of Clusters')
+    #plt.title('Gap Statistic for Determining Optimal Number of Clusters')
     plt.xticks(k_range)
     plt.grid(True)
     plt.show()
@@ -254,9 +256,9 @@ def phi(data):
 
     plt.figure(figsize=(12, 10))
     sns.heatmap(phi_matrix, annot=True, cmap='coolwarm', fmt=".2f")
-    plt.title('Phi Coefficient Matrix')
-    plt.xlabel('Features')
-    plt.ylabel('Features')
+    #plt.title('Phi Coefficient Matrix')
+    #plt.xlabel('Features')
+    #plt.ylabel('Features')
     plt.xticks(rotation=90)
     plt.yticks(rotation=0)
     plt.tight_layout()
@@ -316,7 +318,7 @@ def main():
 
     #Cophenetic Correlation Coefficient
     coph_corr, coph_dists = cophenet(linkage_matrix, condensed_distance)
-    print(f"Cophenetic Correlation Coefficient (CCC): {coph_corr:.4f}")
+    #print(f"Cophenetic Correlation Coefficient (CCC): {coph_corr:.4f}")
 
     #Elbow chart
     elbow_chart(linkage_matrix)
